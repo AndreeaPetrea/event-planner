@@ -1,0 +1,4 @@
+/mysql/*
+/app/cache/*
+/app/logs/*
+/.idea/*
