@@ -1,4 +1,6 @@
 /mysql/*
-/app/cache/*
-/app/logs/*
+app/cache/*
+app/logs/*
 /.idea/*
+app/var/
+app/vendor/
