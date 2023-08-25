@@ -2,28 +2,58 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\LoginService;
 
 class LoginController extends AbstractController
 {
     /**
      * @Route("/login", name="userLogin", methods={"POST", "GET"})
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginService $loginService, Request $request): JsonResponse
     {
+        $email = $request->get('email');
+        $password = $request->get('password');
+
+        if (!$email || !$password) {
+            return $this->json(['message' => 'Please insert your email and password']);
+        }
+
+        $currentUser = $loginService->checkUserLogin($email, $password);
+
+        if($currentUser) {
+            return $this->json([
+                'message' => 'You are successfully logged in',
+                'userName' => $currentUser->getName()
+            ]);
+        }
+
         return $this->json([
-            'message' => 'Welcome to your new controller!',
+            'message' => 'The email-password combination do not work. Please try again later'
         ]);
     }
 
     /**
      * @Route("/register", name="userRegister", methods={"POST", "GET"})
      */
-    public function register(Request $request): JsonResponse
+    public function register(LoginService $loginService, Request $request): JsonResponse
     {
+        $user = (new User())
+            ->setEmail($request->get('email'))
+            ->setName($request->get('name'))
+            ->setSurname($request->get('surname'))
+            ->setPhoneNo($request->get('phone'))
+            ->setPassword(sha1($request->get('password')))
+            ->setUserAccessId($request->get('userAccessId'))
+            ->setPartnerId($request->get('partnerId'))
+            ->setUserId(1);
+
+       $loginService->createUserAccount($user);
+
         return $this->json([
             'message' => 'Account has been created. Please login!',
         ]);
@@ -32,10 +62,25 @@ class LoginController extends AbstractController
     /**
      * @Route("/reset-password", name="resetPassword", methods={"POST", "GET"})
      */
-    public function passwordReset(Request $request): JsonResponse
+    public function passwordReset(LoginService $loginService, Request $request): JsonResponse
     {
+        $email = $request->get('email');
+        $currentPassword = $request->get('currentPassword');
+        $updatedPassword = $request->get('updatedPassword');
+
+        $foundUser = $loginService->searchUser(['email' => $email, 'password' => sha1($currentPassword)]);
+
+        if (!$foundUser) {
+            return $this->json([
+                'message' => 'User with the combination of password-email does not exist!',
+            ]);
+        }
+
+        $foundUser->setPassword(sha1($updatedPassword));
+        $loginService->updateUser($foundUser);
+
         return $this->json([
-            'message' => 'Password resetted successfully!',
+            'message' => 'Password has been updated!',
         ]);
     }
 }
