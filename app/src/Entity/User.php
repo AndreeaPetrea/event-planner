@@ -18,11 +18,6 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
-     */
-    private $user_id;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -53,25 +48,13 @@ class User
     private $user_access_id;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $partner_id;
+    private $partner_email;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(int $user_id): self
-    {
-        $this->user_id = $user_id;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -146,14 +129,14 @@ class User
         return $this;
     }
 
-    public function getPartnerId(): ?int
+    public function getPartnerEmail(): ?int
     {
-        return $this->partner_id;
+        return $this->partner_email;
     }
 
-    public function setPartnerId(?int $partner_id): self
+    public function setPartnerEmail(?string $partner_email): self
     {
-        $this->partner_id = $partner_id;
+        $this->partner_email = $partner_email;
 
         return $this;
     }

@@ -20,9 +20,7 @@
             "ref": "013b823e7fee65890b23e40f31e6667a1ac519ac"
         },
         "files": [
-            "config/packages/doctrine.yaml",
-            "src/Entity/.gitignore",
-            "src/Repository/.gitignore"
+            "config/packages/doctrine.yaml"
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
@@ -35,7 +33,6 @@
         },
         "files": [
             "config/packages/doctrine_migrations.yaml",
-            "migrations/.gitignore"
         ]
     },
     "symfony/console": {
@@ -77,7 +74,6 @@
             "config/routes/framework.yaml",
             "config/services.yaml",
             "public/index.php",
-            "src/Controller/.gitignore",
             "src/Kernel.php"
         ]
     },

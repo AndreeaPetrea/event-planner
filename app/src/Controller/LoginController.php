@@ -49,8 +49,7 @@ class LoginController extends AbstractController
             ->setPhoneNo($request->get('phone'))
             ->setPassword(sha1($request->get('password')))
             ->setUserAccessId($request->get('userAccessId'))
-            ->setPartnerId($request->get('partnerId'))
-            ->setUserId(1);
+            ->setPartnerEmail($request->get('partnerEmail'));
 
        $loginService->createUserAccount($user);
 
@@ -67,6 +66,12 @@ class LoginController extends AbstractController
         $email = $request->get('email');
         $currentPassword = $request->get('currentPassword');
         $updatedPassword = $request->get('updatedPassword');
+
+        if (!$email || !$currentPassword || !$updatedPassword) {
+            return $this->json([
+                'message' => 'Please provide an email, current password and the new password!',
+            ]);
+        }
 
         $foundUser = $loginService->searchUser(['email' => $email, 'password' => sha1($currentPassword)]);
 
