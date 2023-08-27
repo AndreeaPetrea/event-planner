@@ -20,7 +20,7 @@ class LoginController extends AbstractController
         $password = $request->get('password');
 
         if (!$email || !$password) {
-            return $this->json(['message' => 'Please insert your email and password']);
+            return $this->json(['message' => 'Please insert your email and password'], 500);
         }
 
         $currentUser = $loginService->checkUserLogin($email, $password);
@@ -34,7 +34,7 @@ class LoginController extends AbstractController
 
         return $this->json([
             'message' => 'The email-password combination do not work. Please try again later'
-        ]);
+        ], 500);
     }
 
     /**
@@ -70,7 +70,7 @@ class LoginController extends AbstractController
         if (!$email || !$currentPassword || !$updatedPassword) {
             return $this->json([
                 'message' => 'Please provide an email, current password and the new password!',
-            ]);
+            ], 500);
         }
 
         $foundUser = $loginService->searchUser(['email' => $email, 'password' => sha1($currentPassword)]);
@@ -78,7 +78,7 @@ class LoginController extends AbstractController
         if (!$foundUser) {
             return $this->json([
                 'message' => 'User with the combination of password-email does not exist!',
-            ]);
+            ], 500);
         }
 
         $foundUser->setPassword(sha1($updatedPassword));

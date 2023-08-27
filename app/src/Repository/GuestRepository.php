@@ -63,4 +63,24 @@ class GuestRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function massUpdateStatus(array $ids, string $status): void
+    {
+        $entityManager = $this->getEntityManager()->createQueryBuilder();
+        $query = $entityManager
+            ->update('Guest', 'g')
+            ->set('g.status', $status)
+            ->where('id', $ids)
+            ->getQuery();
+        $query->execute();
+    }
+
+    public function massDeleteGuest(array $ids): void
+    {
+        $entityManager = $this->getEntityManager()->createQueryBuilder();
+        $query = $entityManager
+            ->delete('Guest', 'g')
+            ->where('id', $ids)
+            ->getQuery();
+        $query->execute();
+    }
 }

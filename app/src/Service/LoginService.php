@@ -7,21 +7,17 @@ use App\Repository\UserRepository;
 class LoginService
 {
 
-    private $userRepository;
-    public function __construct(UserRepository $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
+    public function __construct(private UserRepository $userRepository)
+    {}
 
     public function checkUserLogin(string $email, string $password): ?User
     {
      return $this->userRepository->findOneBy(['email' => $email, 'password' => sha1($password)]);
     }
 
-    public function createUserAccount(User $user):bool
+    public function createUserAccount(User $user): void
     {
         $this->userRepository->add($user, true);
-        return true;
     }
 
     public function searchUser(array $criteria): ?User
@@ -29,7 +25,7 @@ class LoginService
         return $this->userRepository->findOneBy($criteria);
     }
 
-    public function updateUser(User $user)
+    public function updateUser(User $user): void
     {
         $this->userRepository->add($user, true);
     }
