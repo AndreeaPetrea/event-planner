@@ -45,7 +45,7 @@ class Guest
     /**
      * @ORM\Column(type="integer")
      */
-    private $event_id;
+    private $eventId;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -119,12 +119,12 @@ class Guest
 
     public function getEventId(): ?int
     {
-        return $this->event_id;
+        return $this->eventId;
     }
 
-    public function setEventId(int $event_id): self
+    public function setEventId(int $eventId): self
     {
-        $this->event_id = $event_id;
+        $this->eventId = $eventId;
 
         return $this;
     }

@@ -13,6 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class GuestController extends AbstractController
 {
     /**
+     * @Route("/get-guests/{eventId}", name="getGuests", methods={"POST", "GET"})
+     */
+    public function getGuests($eventId, GuestRepository $guestRepository):JsonResponse
+    {
+        $guests = $guestRepository->findBy(['eventId' => $eventId]);
+        return $this->json($guests);
+    }
+
+    /**
      * @Route("/save-guest", name="saveGuest", methods={"POST", "GET"})
      */
     public function saveGuest(Request $request, GuestService $guestService): JsonResponse
@@ -21,7 +30,7 @@ class GuestController extends AbstractController
         $ageGroup = $request->get('ageGroup');
         $groupName = $request->get('groupName');
         $note = $request->get('note');
-        $eventId = $request->get('eventId');
+        $eventId = (int) $request->get('eventId');
         $phoneNumber = $request->get('phoneNumber');
 
         if (!$name) {
