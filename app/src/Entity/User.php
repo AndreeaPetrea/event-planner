@@ -2,55 +2,47 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- */
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource]
 class User
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $surname;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $phone_number;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $phone_no;
+    #[ORM\OneToOne(targetEntity: UserAccess::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user_access;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $user_access_id;
+    #[ORM\Column(type: 'datetime')]
+    private $modified_date;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $partner_email;
+    #[ORM\ManyToMany(targetEntity: Event::class, mappedBy: 'owner')]
+    private $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,7 +66,7 @@ class User
         return $this->surname;
     }
 
-    public function setSurname(string $surname): self
+    public function setSurname(?string $surname): self
     {
         $this->surname = $surname;
 
@@ -93,50 +85,65 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->password;
+        return $this->phone_number;
     }
 
-    public function setPassword(string $password): self
+    public function setPhoneNumber(?string $phone_number): self
     {
-        $this->password = $password;
+        $this->phone_number = $phone_number;
 
         return $this;
     }
 
-    public function getPhoneNo(): ?string
+    public function getUserAccess(): ?UserAccess
     {
-        return $this->phone_no;
+        return $this->user_access;
     }
 
-    public function setPhoneNo(?string $phone_no): self
+    public function setUserAccess(UserAccess $user_access): self
     {
-        $this->phone_no = $phone_no;
+        $this->user_access = $user_access;
 
         return $this;
     }
 
-    public function getUserAccessId(): ?int
+    public function getModifiedDate(): ?\DateTimeInterface
     {
-        return $this->user_access_id;
+        return $this->modified_date;
     }
 
-    public function setUserAccessId(int $user_access_id): self
+    public function setModifiedDate(\DateTimeInterface $modified_date): self
     {
-        $this->user_access_id = $user_access_id;
+        $this->modified_date = $modified_date;
 
         return $this;
     }
 
-    public function getPartnerEmail(): ?int
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getEvents(): Collection
     {
-        return $this->partner_email;
+        return $this->events;
     }
 
-    public function setPartnerEmail(?string $partner_email): self
+    public function addEvent(Event $event): self
     {
-        $this->partner_email = $partner_email;
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeOwner($this);
+        }
 
         return $this;
     }
